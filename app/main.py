@@ -20,7 +20,8 @@ client = chromadb.Client(Settings(
     anonymized_telemetry=False
 ))
 
-collection = client.get_or_create_collection(name="text_chunks")
+def get_collection():
+    return client.get_or_create_collection(name="text_chunks")
 
 @app.get("/")
 def hello():
@@ -29,6 +30,7 @@ def hello():
 @app.post("/index-text")
 def index_text(text_chunk: TextChunk):
     doc_id = str(uuid.uuid4())
+    collection = get_collection()
     collection.add(
         documents=[text_chunk.text],
         metadatas=[text_chunk.metadata],
@@ -38,6 +40,7 @@ def index_text(text_chunk: TextChunk):
 
 @app.get("/search-text")
 def search_text(query: str, n_results: int = 5):
+    collection = get_collection()
     results = collection.query(
         query_texts=[query],
         n_results=n_results
@@ -57,6 +60,14 @@ def search_text(query: str, n_results: int = 5):
             )
         ]
     }
+
+@app.delete("/delete-index")
+def delete_index():
+    try:
+        client.delete_collection(name="text_chunks")
+        return {"status": "success", "message": "Index deleted successfully"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.get("/with-params")
 def with_params_example(test_model: Test_Model):
