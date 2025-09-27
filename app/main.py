@@ -4,6 +4,7 @@ from app.models import Test_Model, TextChunk
 import chromadb
 from chromadb.config import Settings
 import uuid
+from datetime import datetime
 
 app = FastAPI()
 
@@ -31,9 +32,16 @@ def hello():
 def index_text(text_chunk: TextChunk):
     doc_id = str(uuid.uuid4())
     collection = get_collection()
+    
+    # ChromaDB requires non-empty metadata, so we add a default field if empty
+    if not text_chunk.metadata:
+        metadata = {"indexed_at": datetime.now().isoformat()}
+    else:
+        metadata = text_chunk.metadata
+    
     collection.add(
         documents=[text_chunk.text],
-        metadatas=[text_chunk.metadata or {}],
+        metadatas=[metadata],
         ids=[doc_id]
     )
     return {"status": "success", "document_id": doc_id}
