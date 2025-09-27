@@ -1,12 +1,55 @@
 from fastapi import FastAPI
-from app.models import Test_Model
+from app.models import Test_Model, TextChunk
+import chromadb
+from chromadb.config import Settings
+import uuid
+
 app = FastAPI()
+
+client = chromadb.Client(Settings(
+    persist_directory="./chroma_db",
+    anonymized_telemetry=False
+))
+
+collection = client.get_or_create_collection(name="text_chunks")
 
 @app.get("/")
 def hello():
     return {"test": "true"}
 
-# test api with input
+@app.post("/index-text")
+def index_text(text_chunk: TextChunk):
+    doc_id = str(uuid.uuid4())
+    collection.add(
+        documents=[text_chunk.text],
+        metadatas=[text_chunk.metadata],
+        ids=[doc_id]
+    )
+    return {"status": "success", "document_id": doc_id}
+
+@app.get("/search-text")
+def search_text(query: str, n_results: int = 5):
+    results = collection.query(
+        query_texts=[query],
+        n_results=n_results
+    )
+    return {
+        "query": query,
+        "results": [
+            {
+                "text": doc,
+                "metadata": meta,
+                "distance": dist
+            }
+            for doc, meta, dist in zip(
+                results["documents"][0],
+                results["metadatas"][0],
+                results["distances"][0]
+            )
+        ]
+    }
+
 @app.get("/with-params")
 def with_params_example(test_model: Test_Model):
-    return {"test": f"my name is {test_model.name}"} 
+    return {"test": f"my name is {test_model.name}"}
+
