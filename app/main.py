@@ -33,7 +33,7 @@ def index_text(text_chunk: TextChunk):
     collection = get_collection()
     collection.add(
         documents=[text_chunk.text],
-        metadatas=[text_chunk.metadata],
+        metadatas=[text_chunk.metadata or {}],
         ids=[doc_id]
     )
     return {"status": "success", "document_id": doc_id}

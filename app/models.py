@@ -1,9 +1,9 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Dict, Any
 
 class Test_Model(BaseModel):
     name: str
 
 class TextChunk(BaseModel):
     text: str
-    metadata: Optional[dict] = {}
+    metadata: Optional[Dict[str, Any]] = None
