@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import MyInfo from '../components/MyInfo'
+import PersonalInfo from '../components/PersonalInfo'
 import Recap from '../components/Recap'
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'my-info' | 'recap'>('my-info')
+  const [activeTab, setActiveTab] = useState<'financial-documents' | 'personal-info' | 'recap'>('financial-documents')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -24,14 +25,24 @@ export default function Home() {
             {/* Navigation */}
             <nav className="flex space-x-1">
               <button
-                onClick={() => setActiveTab('my-info')}
+                onClick={() => setActiveTab('financial-documents')}
                 className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === 'my-info'
+                  activeTab === 'financial-documents'
                     ? 'bg-vt-orange text-vt-maroon shadow-lg'
                     : 'text-vt-white hover:bg-vt-orange/20 hover:text-vt-orange'
                 }`}
               >
-                My Info
+                Financial Documents
+              </button>
+              <button
+                onClick={() => setActiveTab('personal-info')}
+                className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  activeTab === 'personal-info'
+                    ? 'bg-vt-orange text-vt-maroon shadow-lg'
+                    : 'text-vt-white hover:bg-vt-orange/20 hover:text-vt-orange'
+                }`}
+              >
+                Personal Information
               </button>
               <button
                 onClick={() => setActiveTab('recap')}
@@ -50,7 +61,8 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === 'my-info' && <MyInfo />}
+        {activeTab === 'financial-documents' && <MyInfo />}
+        {activeTab === 'personal-info' && <PersonalInfo />}
         {activeTab === 'recap' && <Recap />}
       </main>
     </div>

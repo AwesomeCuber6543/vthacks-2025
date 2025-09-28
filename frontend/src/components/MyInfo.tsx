@@ -4,6 +4,8 @@ import { useState } from 'react'
 
 export default function MyInfo() {
   const [dragActive, setDragActive] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [expandedFiles, setExpandedFiles] = useState<Set<number>>(new Set())
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
@@ -21,17 +23,59 @@ export default function MyInfo() {
     setDragActive(false)
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      // Handle file upload here
-      console.log('File dropped:', e.dataTransfer.files[0])
+      const newFiles = Array.from(e.dataTransfer.files)
+      setUploadedFiles(prev => [...prev, ...newFiles])
+      console.log('Files dropped:', newFiles)
     }
   }
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      // Handle file upload here
-      console.log('File selected:', e.target.files[0])
+      const newFiles = Array.from(e.target.files)
+      setUploadedFiles(prev => [...prev, ...newFiles])
+      console.log('Files selected:', newFiles)
     }
   }
+
+  const toggleFileDetails = (index: number) => {
+    setExpandedFiles(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(index)) {
+        newSet.delete(index)
+      } else {
+        newSet.add(index)
+      }
+      return newSet
+    })
+  }
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+    setExpandedFiles(prev => {
+      const newSet = new Set(prev)
+      newSet.delete(index)
+      return newSet
+    })
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -87,44 +131,113 @@ export default function MyInfo() {
                 accept=".pdf,.png,.jpg,.jpeg"
                 onChange={handleFileInput}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                multiple
               />
             </div>
           </div>
+
+          {/* Display uploaded files */}
+          {uploadedFiles.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-white font-semibold mb-3">Uploaded Documents:</h3>
+              <div className="space-y-3">
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} className="bg-white/5 rounded-lg border border-white/10 overflow-hidden">
+                    {/* File Header */}
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => toggleFileDetails(index)}
+                          className="flex items-center space-x-2 text-white hover:text-vt-orange transition-colors"
+                        >
+                          <svg
+                            className={`w-4 h-4 transition-transform ${
+                              expandedFiles.has(index) ? 'rotate-180' : ''
+                            }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                          <span className="text-sm font-medium">{file.name}</span>
+                        </button>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <span className="text-white/60 text-xs">
+                          {formatFileSize(file.size)}
+                        </span>
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded transition-colors"
+                          title="Remove file"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* File Details Dropdown */}
+                    {expandedFiles.has(index) && (
+                      <div className="px-3 pb-3 border-t border-white/10">
+                        <div className="pt-3 space-y-2">
+                          <div className="grid grid-cols-2 gap-4 text-xs">
+                            <div>
+                              <span className="text-white/60">File Name:</span>
+                              <p className="text-white font-medium">{file.name}</p>
+                            </div>
+                            <div>
+                              <span className="text-white/60">File Size:</span>
+                              <p className="text-white font-medium">{formatFileSize(file.size)}</p>
+                            </div>
+                            <div>
+                              <span className="text-white/60">File Type:</span>
+                              <p className="text-white font-medium">{file.type || 'Unknown'}</p>
+                            </div>
+                            <div>
+                              <span className="text-white/60">Last Modified:</span>
+                              <p className="text-white font-medium">{formatDate(new Date(file.lastModified))}</p>
+                            </div>
+                          </div>
+                          
+                          {/* File Preview (for images) */}
+                          {file.type.startsWith('image/') && (
+                            <div className="mt-3">
+                              <span className="text-white/60 text-xs">Preview:</span>
+                              <div className="mt-2 max-w-xs">
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt={file.name}
+                                  className="max-w-full h-auto rounded border border-white/20"
+                                  style={{ maxHeight: '200px' }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Feature Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 text-center">
-          <div className="w-12 h-12 bg-vt-orange rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <h3 className="text-white font-semibold text-lg mb-2">Secure</h3>
-          <p className="text-white/70 text-sm">Your documents are encrypted and secure</p>
-        </div>
-        
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 text-center">
-          <div className="w-12 h-12 bg-vt-orange rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <h3 className="text-white font-semibold text-lg mb-2">Fast</h3>
-          <p className="text-white/70 text-sm">Get instant analysis and insights</p>
-        </div>
-        
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 text-center">
-          <div className="w-12 h-12 bg-vt-orange rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-          </div>
-          <h3 className="text-white font-semibold text-lg mb-2">Smart</h3>
-          <p className="text-white/70 text-sm">AI-powered financial analysis</p>
-        </div>
-      </div>
     </div>
   )
 }
