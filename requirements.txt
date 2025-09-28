@@ -4,5 +4,11 @@ chromadb
 pydantic
 requests
 python-dotenv
-
-
+pymysql
+sqlalchemy
+pyvespa
+vespacli 
+byaldi 
+colpali-engine
+python-multipart
+google-generativeai
