@@ -1,0 +1,7 @@
+from byaldi import RAGMultiModalModel
+
+RAG = RAGMultiModalModel.from_pretrained(
+    "vidore/colpali-v1.3", index_root="./index", device="mps"
+)
+
+RAG.index(input_path="./indexed_docs", index_name="test", store_collection_with_index=True)
