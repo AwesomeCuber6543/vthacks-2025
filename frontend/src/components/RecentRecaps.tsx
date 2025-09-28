@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 interface CallSummary {
   id: string
@@ -15,7 +16,7 @@ interface CallSummary {
 export default function RecentRecaps() {
   const [expandedRecaps, setExpandedRecaps] = useState<Set<string>>(new Set())
 
-  // Mock data for the 5 most recent calls
+  // Sample data for demonstration - 2 recent calls
   const recentCalls: CallSummary[] = [
     {
       id: '1',
@@ -23,7 +24,51 @@ export default function RecentRecaps() {
       date: '2024-01-15',
       duration: '45 minutes',
       summary: 'Discussed current investment portfolio allocation, reviewed retirement goals, and analyzed risk tolerance. Recommended rebalancing 401k contributions and exploring Roth IRA options.',
-      detailedSummary: 'During this comprehensive financial planning session, we analyzed your current investment portfolio consisting of a 401k with 60% stocks and 40% bonds. We reviewed your retirement timeline of 25 years and discussed your risk tolerance. Key recommendations included increasing your 401k contribution to maximize employer matching, opening a Roth IRA for tax diversification, and considering target-date funds for simplified management. We also discussed emergency fund adequacy and insurance coverage needs.',
+      detailedSummary: `# Investment Portfolio Review & Retirement Planning
+
+## 📊 Current Portfolio Analysis
+
+### Asset Allocation
+- **401k Balance**: $45,000
+- **Current Allocation**: 60% Stocks, 40% Bonds
+- **Contribution Rate**: 8% (with 4% employer match)
+- **Risk Tolerance**: Moderate
+
+### Key Recommendations
+
+#### 1. Increase 401k Contributions
+- **Current**: 8% contribution rate
+- **Recommended**: 12% contribution rate
+- **Benefit**: Maximize employer matching (additional $1,800/year)
+
+#### 2. Open Roth IRA
+- **Annual Contribution**: $6,000
+- **Tax Benefits**: Tax-free growth and withdrawals
+- **Diversification**: Tax diversification strategy
+
+#### 3. Portfolio Rebalancing
+- **Target Allocation**: 70% Stocks, 30% Bonds
+- **Rebalancing Frequency**: Quarterly
+- **Investment Options**: Target-date funds vs. individual stocks
+
+## 🎯 Retirement Planning
+
+### Timeline & Goals
+- **Retirement Age**: 65 (25 years from now)
+- **Target Retirement Income**: $80,000/year
+- **Required Portfolio**: $2,000,000 (4% withdrawal rate)
+
+### Action Items
+- [ ] Increase 401k contribution to 12%
+- [ ] Open Roth IRA account
+- [ ] Set up automatic rebalancing
+- [ ] Review investment options quarterly
+
+## 📈 Next Steps
+1. **Week 1**: Update 401k contribution rate
+2. **Week 2**: Research and open Roth IRA
+3. **Month 1**: Set up automatic contributions
+4. **Quarter 1**: Review and rebalance portfolio`,
       keyPoints: [
         'Current 401k balance: $45,000 with 8% contribution rate',
         'Recommended increasing contribution to 12% to maximize employer match',
@@ -38,58 +83,77 @@ export default function RecentRecaps() {
       date: '2024-01-12',
       duration: '32 minutes',
       summary: 'Analyzed student loan repayment options, evaluated refinancing opportunities, and created a debt payoff strategy. Recommended income-driven repayment plan and discussed loan forgiveness programs.',
-      detailedSummary: 'This session focused on optimizing your student loan repayment strategy. We analyzed your current federal loans totaling $28,500 with an average interest rate of 4.2%. We discussed various repayment options including standard, graduated, and income-driven plans. Given your current income and career trajectory, we recommended the REPAYE plan for potential loan forgiveness after 20 years of qualifying payments. We also explored private refinancing options and calculated potential savings.',
+      detailedSummary: `# Student Loan Strategy & Debt Consolidation
+
+## 💰 Current Loan Overview
+
+### Loan Details
+- **Total Debt**: $28,500
+- **Number of Loans**: 4 federal loans
+- **Average Interest Rate**: 4.2%
+- **Interest Rate Range**: 3.4% - 5.1%
+- **Current Payment**: $320/month
+
+### Loan Breakdown
+| Loan Type | Balance | Interest Rate | Monthly Payment |
+|-----------|---------|---------------|-----------------|
+| Direct Subsidized | $8,500 | 3.4% | $95 |
+| Direct Unsubsidized | $12,000 | 4.2% | $135 |
+| Direct PLUS | $5,500 | 5.1% | $65 |
+| Direct Consolidation | $2,500 | 4.1% | $25 |
+
+## 🎯 Repayment Strategy
+
+### Recommended Plan: REPAYE
+- **Payment**: 10% of discretionary income
+- **Timeline**: 20 years for undergraduate loans
+- **Forgiveness**: Remaining balance forgiven after 20 years
+- **Tax Implications**: Forgiven amount may be taxable
+
+### Alternative Options
+1. **Standard Repayment**: $320/month for 10 years
+2. **Graduated Repayment**: Starts lower, increases over time
+3. **Private Refinancing**: Potentially lower rates (3.5% - 4.5%)
+
+## 📊 Financial Impact Analysis
+
+### REPAYE vs Standard Plan
+| Metric | REPAYE | Standard |
+|--------|--------|----------|
+| Monthly Payment | $180 | $320 |
+| Total Paid | $43,200 | $38,400 |
+| Time to Payoff | 20 years | 10 years |
+| Forgiveness Amount | $0 | $0 |
+
+### Refinancing Analysis
+- **Potential Rate**: 3.8% (average)
+- **Monthly Savings**: $25
+- **Total Interest Savings**: $3,000
+- **Risk**: Lose federal protections
+
+## ✅ Action Plan
+
+### Immediate Steps
+1. **Apply for REPAYE** - Submit application within 30 days
+2. **Set up Auto-Pay** - 0.25% interest rate reduction
+3. **Track Payments** - Use loan servicer portal
+4. **Annual Recertification** - Update income annually
+
+### Long-term Strategy
+- **Year 1-5**: Focus on career growth and income increase
+- **Year 5-10**: Consider refinancing if rates remain low
+- **Year 10-20**: Evaluate forgiveness vs. payoff options
+
+## 📋 Resources
+- [StudentAid.gov](https://studentaid.gov) - Federal loan information
+- [Loan Simulator](https://studentaid.gov/loan-simulator) - Compare repayment plans
+- [PSLF Help Tool](https://studentaid.gov/pslf) - Public Service Loan Forgiveness`,
       keyPoints: [
         'Total student loan debt: $28,500 across 4 federal loans',
         'Average interest rate: 4.2% (ranging from 3.4% to 5.1%)',
         'Recommended REPAYE plan for potential forgiveness',
         'Discussed refinancing with private lenders for lower rates',
         'Created 5-year debt payoff timeline with extra payments'
-      ]
-    },
-    {
-      id: '3',
-      title: 'Tax Planning & Deduction Optimization',
-      date: '2024-01-08',
-      duration: '28 minutes',
-      summary: 'Reviewed tax situation for 2023, identified missed deductions, and planned 2024 tax strategy. Discussed HSA contributions, charitable giving, and retirement account tax benefits.',
-      detailedSummary: 'This tax planning session focused on optimizing your 2023 tax return and planning for 2024. We reviewed your W-2, 1099 forms, and identified several missed deductions including unreimbursed work expenses, student loan interest, and charitable contributions. We discussed maximizing HSA contributions for triple tax benefits, the impact of Roth vs. traditional IRA contributions on your tax bracket, and strategies for reducing taxable income through retirement contributions.',
-      keyPoints: [
-        'Identified $2,400 in missed deductions for 2023',
-        'Recommended maximizing HSA contribution ($4,300 for 2024)',
-        'Discussed Roth vs. traditional IRA tax implications',
-        'Planned charitable giving strategy for tax benefits',
-        'Reviewed quarterly estimated tax payments for 2024'
-      ]
-    },
-    {
-      id: '4',
-      title: 'Emergency Fund & Insurance Coverage Review',
-      date: '2024-01-05',
-      duration: '35 minutes',
-      summary: 'Evaluated emergency fund adequacy, reviewed insurance coverage, and discussed risk management strategies. Recommended increasing emergency fund and reviewed life insurance needs.',
-      detailedSummary: 'This risk management session focused on protecting your financial foundation. We analyzed your current emergency fund of $8,500 (3 months expenses) and discussed the importance of building it to 6 months. We reviewed your health, auto, and renters insurance coverage, identifying gaps in coverage. We discussed the need for life insurance given your family situation and career stage, and explored term vs. whole life insurance options. We also covered disability insurance and its importance for income protection.',
-      keyPoints: [
-        'Current emergency fund: $8,500 (3 months expenses)',
-        'Recommended building to $17,000 (6 months expenses)',
-        'Reviewed insurance coverage gaps and deductibles',
-        'Discussed term life insurance needs ($500,000 coverage)',
-        'Explored disability insurance for income protection'
-      ]
-    },
-    {
-      id: '5',
-      title: 'Budget Analysis & Spending Optimization',
-      date: '2024-01-02',
-      duration: '40 minutes',
-      summary: 'Analyzed monthly spending patterns, identified areas for savings, and created a realistic budget. Discussed the 50/30/20 rule and automated savings strategies.',
-      detailedSummary: 'This budgeting session involved a deep dive into your spending habits and financial goals. We analyzed your bank statements and categorized expenses to understand your spending patterns. We identified several areas for optimization including dining out, subscription services, and entertainment expenses. We created a realistic budget using the 50/30/20 rule (50% needs, 30% wants, 20% savings) and discussed automation strategies for savings and bill payments. We also explored apps and tools for expense tracking.',
-      keyPoints: [
-        'Monthly income: $4,200 after taxes',
-        'Current savings rate: 15% (target: 20%)',
-        'Identified $300/month in potential savings',
-        'Recommended automated savings transfers',
-        'Discussed expense tracking apps and tools'
       ]
     }
   ]
@@ -175,7 +239,9 @@ export default function RecentRecaps() {
                   <div>
                     <h4 className="text-lg font-semibold text-white mb-3">Detailed Summary</h4>
                     <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                      <p className="text-white/90 leading-relaxed">{call.detailedSummary}</p>
+                      <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-p:text-white/90 prose-strong:text-white prose-em:text-white/80 prose-ul:text-white/90 prose-ol:text-white/90 prose-li:text-white/90 prose-li:marker:text-vt-orange prose-table:text-white/90 prose-th:text-white prose-th:bg-white/10 prose-td:text-white/90 prose-td:border-white/20 prose-a:text-vt-orange prose-a:hover:text-vt-orange/80 prose-code:text-vt-orange prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-white/5 prose-pre:border prose-pre:border-white/10">
+                        <ReactMarkdown>{call.detailedSummary}</ReactMarkdown>
+                      </div>
                     </div>
                   </div>
 
