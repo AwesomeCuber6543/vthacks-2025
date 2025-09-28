@@ -33,7 +33,7 @@ class ModelManager:
         model = RAGMultiModalModel.from_index(
             index_path="../index/advisr", 
             index_root="./index", 
-            device=device
+            device="cpu"
         )
         
         # Cache model with timestamp
@@ -69,7 +69,11 @@ class ModelManager:
     def create_index(self, input_path: str, index_name: str = "advisr") -> bool:
         """Create a new index with documents"""
         try:
-            model = self.get_model(index_name)
+            model = RAGMultiModalModel.from_pretrained(
+                index_path="vidore/colpali-v1.3", 
+                index_root="index", 
+                device="cpu"
+            )
             model.index(
                 input_path=input_path, 
                 index_name=index_name, 
