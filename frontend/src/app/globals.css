@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --vt-maroon: #861F41;
+  --vt-orange: #E87722;
+  --vt-white: #FFFFFF;
+}
+
+body {
+  color: var(--vt-white);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  min-height: 100vh;
+}
