@@ -1,10 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import Test_Model, TextChunk
+from app.models import Test_Model, TextChunk, PerplexityQuery
 import chromadb
 from chromadb.config import Settings
 import uuid
 from datetime import datetime
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -76,6 +81,48 @@ def delete_index():
         return {"status": "success", "message": "Index deleted successfully"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+@app.post("/query-perplexity")
+def query_perplexity(perplexity_query: PerplexityQuery):
+    try:
+        api_key = os.getenv("PERPLEXITY_API_KEY")
+        if not api_key:
+            return {"status": "error", "message": "Perplexity API key not found"}
+            
+        url = "https://api.perplexity.ai/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": "llama-3.1-sonar-small-128k-online",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": perplexity_query.query
+                }
+            ],
+            "max_tokens": 1000,
+            "temperature": 0.2
+        }
+        
+        response = requests.post(url, headers=headers, json=payload)
+        response.raise_for_status()
+        
+        result = response.json()
+        
+        return {
+            "status": "success",
+            "query": perplexity_query.query,
+            "response": result["choices"][0]["message"]["content"],
+            "usage": result.get("usage", {})
+        }
+        
+    except requests.exceptions.RequestException as e:
+        return {"status": "error", "message": f"Request failed: {str(e)}"}
+    except Exception as e:
+        return {"status": "error", "message": f"Unexpected error: {str(e)}"}
 
 @app.get("/with-params")
 def with_params_example(test_model: Test_Model):

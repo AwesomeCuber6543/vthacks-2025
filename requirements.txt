@@ -2,5 +2,7 @@ fastapi
 uvicorn
 chromadb
 pydantic
+requests
+python-dotenv
 
 

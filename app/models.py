@@ -7,3 +7,6 @@ class Test_Model(BaseModel):
 class TextChunk(BaseModel):
     text: str
     metadata: Optional[Dict[str, Any]] = None
+
+class PerplexityQuery(BaseModel):
+    query: str
